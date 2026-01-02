@@ -1,3 +1,4 @@
+import json
 import re
 import sys
 from urllib.parse import urljoin, urlparse
@@ -76,6 +77,16 @@ class Crawler:
                     print(f"  - {link}")
         print()
 
+    def save_json(self):
+        # Use domain name as filename
+        name = self.domain.replace('www.', '').split('.')[0]
+        filename = f"{name}.json"
+        clean = {cat: sorted(set(links)) for cat, links in self.results.items()}
+        data = {"url": self.url, "results": clean}
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print(f"Saved to {filename}")
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -85,3 +96,4 @@ if __name__ == "__main__":
     crawler = Crawler(sys.argv[1])
     crawler.crawl()
     crawler.print_results()
+    crawler.save_json()
